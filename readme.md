@@ -23,5 +23,7 @@ Extract encrypted backup content to folder
 
 ### Thank you
 Nikolay Elenkov
+
 https://github.com/nelenkov/android-backup-extractor
+
 https://nelenkov.blogspot.com/2012/06/unpacking-android-backups.html
