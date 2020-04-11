@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <StartupObject>AndroidBackupUnpackerConsole.Program</StartupObject>
+    <Authors>Luka Kusulja</Authors>
+    <Company>Quesko</Company>
+    <DebugType Condition=" '$(Configuration)' == 'Release' ">None</DebugType>
+    <PackageId>AndroidBackupUnpackerConsole</PackageId>
+    <Product>AndroidBackupUnpacker</Product>
+    <Description>Android backup unpacker</Description>
+    <Copyright>Luka Kusulja</Copyright>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SharpZipLib" Version="1.2.0" />
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20158.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AndroidBackupUnpacker\AndroidBackupUnpacker.csproj" />
+  </ItemGroup>
+
+</Project>
