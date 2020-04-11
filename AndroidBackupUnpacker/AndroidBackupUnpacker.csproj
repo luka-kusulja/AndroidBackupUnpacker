@@ -4,6 +4,10 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Authors>Luka Kusulja</Authors>
     <Company>Quesko</Company>
+    <PackageProjectUrl>https://github.com/luka-kusulja/AndroidBackupUnpacker</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/luka-kusulja/AndroidBackupUnpacker</RepositoryUrl>
+    <Copyright>Luka Kusulja</Copyright>
+    <Description>Android backup unpacker</Description>
   </PropertyGroup>
 
   <ItemGroup>

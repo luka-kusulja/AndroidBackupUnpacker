@@ -8,6 +8,10 @@ Tool written in C# for extracting data from android backup.
 * Unpack backup content to folder
 * Support for encrypted backups
 
+# Download
+If you don't have .net core runtime pick the standalone version  
+https://github.com/luka-kusulja/AndroidBackupUnpacker/releases
+
 # Usage
 Convert backup to TAR archive  
 ```abu backup.ab --convert archive.tar```    

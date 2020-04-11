@@ -11,6 +11,8 @@
     <Product>AndroidBackupUnpacker</Product>
     <Description>Android backup unpacker</Description>
     <Copyright>Luka Kusulja</Copyright>
+    <PackageProjectUrl>https://github.com/luka-kusulja/AndroidBackupUnpacker</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/luka-kusulja/AndroidBackupUnpacker</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
