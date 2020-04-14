@@ -8,7 +8,7 @@ using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 
 namespace AndroidBackupUnpacker
 {
-    public class AndroidBackup
+    public class AndroidBackup : IDisposable
     {
         private MemoryStream backupFileStream;
 
@@ -19,6 +19,11 @@ namespace AndroidBackupUnpacker
             this.backupFileStream = _backupFileStream;
 
             this.Attributes = ExtractAttributesFromBackup();
+        }
+
+        public void Dispose()
+        {
+            this.backupFileStream.Close();
         }
 
         private BackupAttributes ExtractAttributesFromBackup()

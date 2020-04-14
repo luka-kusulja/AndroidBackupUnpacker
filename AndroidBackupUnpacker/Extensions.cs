@@ -13,7 +13,7 @@ namespace AndroidBackupUnpacker
             while (true)
             {
                 currentChar = stream.ReadByte();
-                if (currentChar == '\n')
+                if (currentChar == '\n' || currentChar == -1)
                 {
                     break;
                 }
