@@ -82,10 +82,11 @@ namespace AndroidBackupUnpackerConsole
 
                 if (extractTar == false)
                 {
-                    using (var outputFileStream = new FileStream(path, FileMode.CreateNew, FileAccess.Write))
-                    {
-                        tarStream.CopyTo(outputFileStream);
-                    }
+                    var outputFileStream = new FileStream(path, FileMode.CreateNew, FileAccess.Write);
+                    tarStream.CopyTo(outputFileStream);
+
+                    tarStream.Close();
+                    outputFileStream.Close();
                 }
                 else
                 {

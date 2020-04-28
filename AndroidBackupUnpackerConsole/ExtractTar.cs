@@ -1,7 +1,7 @@
 ﻿using System.IO;
-using ICSharpCode.SharpZipLib.Tar;
 using System.Linq;
 using System.Text;
+using ICSharpCode.SharpZipLib.Tar;
 
 namespace AndroidBackupUnpackerConsole
 {
@@ -18,16 +18,16 @@ namespace AndroidBackupUnpackerConsole
                     continue;
                 }
 
-                string name = SanitizeName(tarEntry.Name);
+                var name = SanitizeName(tarEntry.Name);
 
                 if (Path.IsPathRooted(name))
                 {
                     name = name.Substring(Path.GetPathRoot(name).Length);
                 }
 
-                string outName = Path.Combine(targetDir, name);
+                var outName = Path.Combine(targetDir, name);
 
-                string directoryName = Path.GetDirectoryName(outName);
+                var directoryName = Path.GetDirectoryName(outName);
 
                 Directory.CreateDirectory(directoryName);
 
@@ -45,11 +45,11 @@ namespace AndroidBackupUnpackerConsole
         {
             var stringBuilder = new StringBuilder();
 
-            var illegalChars =  Path.GetInvalidFileNameChars();
+            var illegalChars = Path.GetInvalidFileNameChars();
 
             foreach (var currentChar in name)
             {
-                if(currentChar != '/' && illegalChars.Contains(currentChar))
+                if (currentChar != '/' && illegalChars.Contains(currentChar))
                 {
                     stringBuilder.Append('_');
                 }

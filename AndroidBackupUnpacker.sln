@@ -9,6 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "abu", "AndroidBackupUnpacke
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2083F36A-BCC6-4D36-8571-7BDD88FFE231}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		COPYING = COPYING
 		publish.ps1 = publish.ps1
 		readme.md = readme.md

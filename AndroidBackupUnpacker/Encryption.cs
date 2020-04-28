@@ -7,8 +7,8 @@ namespace AndroidBackupUnpacker
     {
         internal static byte[] PBKDF2(byte[] data, byte[] salt, int iterations)
         {
-            var PBKDF2 = new Rfc2898DeriveBytes(data, salt, iterations);
-            return PBKDF2.GetBytes(32);
+            var pbkdf2 = new Rfc2898DeriveBytes(data, salt, iterations);
+            return pbkdf2.GetBytes(32);
         }
 
         internal static byte[] AESDecrypt(byte[] encryptedData, byte[] key, byte[] iv)

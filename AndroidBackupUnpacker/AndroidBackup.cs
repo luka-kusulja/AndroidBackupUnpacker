@@ -10,55 +10,50 @@ namespace AndroidBackupUnpacker
 {
     public class AndroidBackup : IDisposable
     {
-        private MemoryStream backupFileStream;
+        private readonly MemoryStream _backupFileStream;
 
         public BackupAttributes Attributes { get; }
 
-        public AndroidBackup(MemoryStream _backupFileStream)
+        public AndroidBackup(MemoryStream backupFileStream)
         {
-            this.backupFileStream = _backupFileStream;
+            this._backupFileStream = backupFileStream;
 
             this.Attributes = ExtractAttributesFromBackup();
         }
 
         public void Dispose()
         {
-            this.backupFileStream.Close();
+            this._backupFileStream.Close();
         }
 
         private BackupAttributes ExtractAttributesFromBackup()
         {
-            this.backupFileStream.Position = 0;
+            this._backupFileStream.Position = 0;
 
             var backupAttributes = new BackupAttributes();
-            
-            backupAttributes.Header = this.backupFileStream.ReadOneLine(); // 1. Line
-            backupAttributes.BackupVersion = this.backupFileStream.ReadOneLine(); // 2. Line
 
-            var isCompressed = this.backupFileStream.ReadOneLine(); // 3. Line
+            backupAttributes.Header = this._backupFileStream.ReadOneLine(); // 1. Line
+            backupAttributes.BackupVersion = this._backupFileStream.ReadOneLine(); // 2. Line
+
+            var isCompressed = this._backupFileStream.ReadOneLine(); // 3. Line
             backupAttributes.IsCompressed = isCompressed == "1" ? true : false;
 
-            var encryptionType = this.backupFileStream.ReadOneLine(); // 4. Line
-            switch (encryptionType)
-            {
-                case "none":
-                    backupAttributes.EncryptionType = EncryptionType.None;
-                    break;
-                case "AES-256":
-                    backupAttributes.EncryptionType = EncryptionType.AES256;
-                    break;
-                default:
-                    backupAttributes.EncryptionType = EncryptionType.Unknown;
-                    break;
-            }
+            var encryptionType = this._backupFileStream.ReadOneLine(); // 4. Line
 
-            if(backupAttributes.EncryptionType == EncryptionType.AES256)
+            backupAttributes.EncryptionType = encryptionType switch
             {
-                backupAttributes.UserPasswordSalt = this.backupFileStream.ReadOneLine(); // 5. Line
-                backupAttributes.MasterKeySalt = this.backupFileStream.ReadOneLine(); // 6. Line
-                backupAttributes.Iterations = int.Parse(this.backupFileStream.ReadOneLine()); // 7. Line
-                backupAttributes.UserIVKey = this.backupFileStream.ReadOneLine(); // 8. Line
-                backupAttributes.MasterKeyEncrypted = this.backupFileStream.ReadOneLine(); // 9. Line
+                "none" => EncryptionType.None,
+                "AES-256" => EncryptionType.AES256,
+                _ => EncryptionType.Unknown,
+            };
+
+            if (backupAttributes.EncryptionType == EncryptionType.AES256)
+            {
+                backupAttributes.UserPasswordSalt = this._backupFileStream.ReadOneLine(); // 5. Line
+                backupAttributes.MasterKeySalt = this._backupFileStream.ReadOneLine(); // 6. Line
+                backupAttributes.Iterations = int.Parse(this._backupFileStream.ReadOneLine()); // 7. Line
+                backupAttributes.UserIVKey = this._backupFileStream.ReadOneLine(); // 8. Line
+                backupAttributes.MasterKeyEncrypted = this._backupFileStream.ReadOneLine(); // 9. Line
             }
 
             return backupAttributes;
@@ -66,39 +61,37 @@ namespace AndroidBackupUnpacker
 
         public MemoryStream GetTarStream(string password = "")
         {
-            if(this.Attributes.EncryptionType == EncryptionType.AES256 && string.IsNullOrWhiteSpace(password))
+            if (this.Attributes.EncryptionType == EncryptionType.AES256 && string.IsNullOrWhiteSpace(password))
             {
                 throw new NoPasswordProvidedException();
             }
 
-            this.backupFileStream.Position = 0;
+            this._backupFileStream.Position = 0;
 
             // Skip android backup headers (not encrypted 4, encrypted 9 lines)
-            int skip = this.Attributes.EncryptionType == EncryptionType.None ? 4 : 9;
-            for (int i = 0; i < skip; i++)
+            var skip = this.Attributes.EncryptionType == EncryptionType.None ? 4 : 9;
+            for (var i = 0; i < skip; i++)
             {
-                this.backupFileStream.ReadOneLine();
+                this._backupFileStream.ReadOneLine();
             }
 
             MemoryStream inputStream;
-            if(this.Attributes.EncryptionType == EncryptionType.AES256)
+            if (this.Attributes.EncryptionType == EncryptionType.AES256)
             {
                 inputStream = DecryptedStream(password);
             }
             else
             {
-                inputStream = this.backupFileStream;
+                inputStream = this._backupFileStream;
             }
 
-            using (var inflaterInputStream = new InflaterInputStream(inputStream))
-            {
-                var outputMemoryStream = new MemoryStream();
-                
-                inflaterInputStream.CopyTo(outputMemoryStream);
-                
-                outputMemoryStream.Position = 0;
-                return outputMemoryStream;
-            }
+            var inflaterInputStream = new InflaterInputStream(inputStream);
+            var outputMemoryStream = new MemoryStream();
+
+            inflaterInputStream.CopyTo(outputMemoryStream);
+
+            outputMemoryStream.Position = 0;
+            return outputMemoryStream;
         }
 
         // backup is encrypted with master key (utf8)
@@ -135,15 +128,13 @@ namespace AndroidBackupUnpacker
                 throw new ChecksumFailedException();
             }
 
-            using (var decryptedStream = Encryption.AESDecryptStream(this.backupFileStream, masterKey, masterKeyIV))
-            {
-                var outputMemoryStream = new MemoryStream();
+            var decryptedStream = Encryption.AESDecryptStream(this._backupFileStream, masterKey, masterKeyIV);
+            var outputMemoryStream = new MemoryStream();
 
-                decryptedStream.CopyTo(outputMemoryStream);
+            decryptedStream.CopyTo(outputMemoryStream);
 
-                outputMemoryStream.Position = 0;
-                return outputMemoryStream;
-            }
+            outputMemoryStream.Position = 0;
+            return outputMemoryStream;
         }
 
         private byte[] GetUserPasswordBytes(string password, byte[] salt, int iterations)

@@ -9,7 +9,7 @@ namespace AndroidBackupUnpacker
         {
             var stringBuilder = new StringBuilder();
 
-            var currentChar = -1;
+            int currentChar;
             while (true)
             {
                 currentChar = stream.ReadByte();
@@ -31,9 +31,9 @@ namespace AndroidBackupUnpacker
             var outputStream = new MemoryStream();
 
             var buffer = new byte[1024];
-            while(true)
+            while (true)
             {
-                int readLength = inputStream.Read(buffer, 0, buffer.Length);
+                var readLength = inputStream.Read(buffer, 0, buffer.Length);
 
                 outputStream.Write(buffer, 0, readLength);
 
@@ -48,8 +48,8 @@ namespace AndroidBackupUnpacker
 
         internal static byte[] ReadBlobPart(this Stream inputStream)
         {
-            int blobPartLength = inputStream.ReadByte();
-            byte[] blobPartData = new byte[blobPartLength];
+            var blobPartLength = inputStream.ReadByte();
+            var blobPartData = new byte[blobPartLength];
             inputStream.Read(blobPartData, 0, blobPartLength);
 
             return blobPartData;

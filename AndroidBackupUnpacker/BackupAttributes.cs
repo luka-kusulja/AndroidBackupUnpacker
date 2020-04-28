@@ -3,7 +3,7 @@
     public class BackupAttributes
     {
         public string Header { get; internal set; }
-        
+
         public string BackupVersion { get; internal set; }
 
         public bool IsCompressed { get; internal set; }

@@ -19,13 +19,13 @@ namespace AndroidBackupUnpacker
         internal static byte[] ToJavaUTF8ByteArray(byte[] data)
         {
             var input = new MemoryStream(data);
-            
-            var output = new StringBuilder();
-            while(true)
-            {
-                int read = input.ReadByte();
 
-                if(read == -1)
+            var output = new StringBuilder();
+            while (true)
+            {
+                var read = input.ReadByte();
+
+                if (read == -1)
                 {
                     break;
                 }
