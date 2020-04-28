@@ -58,6 +58,13 @@ namespace AndroidBackupUnpackerConsole
                                                            PrintExitCodes();
                                                        });
 
+            rootCommand.Handler = CommandHandler.Create(
+                                                       () =>
+                                                       {
+                                                           Console.Error.WriteLine("Missing command");
+                                                           Environment.Exit((int)ExitCode.MissingCommand);
+                                                       });
+
             rootCommand.Invoke(args);
         }
 

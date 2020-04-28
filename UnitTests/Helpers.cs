@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Security.Cryptography;
 
 namespace UnitTests
 {
@@ -49,6 +50,43 @@ namespace UnitTests
             }
 
             return process.StandardOutput.ReadToEnd();
+        }
+
+        internal static string GetFileCheckSum(string path)
+        {
+            byte[] checksum;
+            using (var stream = File.OpenRead(path))
+            {
+                var sha = new SHA1Managed();
+                checksum = sha.ComputeHash(stream);
+            }
+
+            return BitConverter.ToString(checksum).Replace("-", string.Empty);
+        }
+
+        private static bool CheckFileChecksum(string filePath, string checksum)
+        {
+            var outputFileChecksum = Helpers.GetFileCheckSum(filePath);
+            return outputFileChecksum == checksum;
+        }
+
+        internal static bool RunAbuAndCheckFile(string abuCommand, TestFileType type)
+        {
+            var abuOutput = Helpers.RunABU(abuCommand);
+
+            if (abuOutput.Contains("Done.") == false)
+            {
+                return false;
+            }
+
+            if (type == TestFileType.Tar)
+            {
+                return CheckFileChecksum(Constants.TarPath, Constants.TarChecksum);
+            }
+            else
+            {
+                return CheckFileChecksum(Constants.ApkPath, Constants.ApkChecksum);
+            }
         }
     }
 }

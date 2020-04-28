@@ -9,6 +9,7 @@
         DirectoryNotEmpty = 4,
         NoPasswordProvided = 5,
         WrongPassword = 6,
-        ChecksumFailed = 7
+        ChecksumFailed = 7,
+        MissingCommand = 8
     }
 }
