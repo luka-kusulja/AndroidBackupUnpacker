@@ -30,16 +30,14 @@ namespace AndroidBackupUnpacker
         {
             this._backupFileStream.Position = 0;
 
-            var backupAttributes = new BackupAttributes();
-
-            backupAttributes.Header = this._backupFileStream.ReadOneLine(); // 1. Line
-            backupAttributes.BackupVersion = this._backupFileStream.ReadOneLine(); // 2. Line
-
-            var isCompressed = this._backupFileStream.ReadOneLine(); // 3. Line
-            backupAttributes.IsCompressed = isCompressed == "1" ? true : false;
+            var backupAttributes = new BackupAttributes
+            {
+                Header = this._backupFileStream.ReadOneLine(), // 1. Line
+                BackupVersion = this._backupFileStream.ReadOneLine(), // 2. Line
+                IsCompressed = this._backupFileStream.ReadOneLine() == "1" ? true : false // 3. Line
+            };
 
             var encryptionType = this._backupFileStream.ReadOneLine(); // 4. Line
-
             backupAttributes.EncryptionType = encryptionType switch
             {
                 "none" => EncryptionType.None,

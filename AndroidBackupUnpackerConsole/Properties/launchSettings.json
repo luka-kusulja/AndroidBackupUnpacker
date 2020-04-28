@@ -1,7 +1,8 @@
 {
   "profiles": {
     "AndroidBackupUnpackerConsole": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "--exitcodes"
     }
   }
 }

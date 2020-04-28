@@ -32,6 +32,9 @@ namespace AndroidBackupUnpackerConsole
             };
             rootCommand.AddCommand(unpackCommand);
 
+            var exitCodesCommand = new Command("--exitcodes", "Print exit code list");
+            rootCommand.AddCommand(exitCodesCommand);
+
             rootCommand.AddGlobalOption(new Option("--password", "Password if the backup is encrypted")
             {
                 Argument = new Argument<string>("password")
@@ -49,27 +52,41 @@ namespace AndroidBackupUnpackerConsole
                                                            UnpackBackup(backup, folder, true, password);
                                                        });
 
+            exitCodesCommand.Handler = CommandHandler.Create(
+                                                       () =>
+                                                       {
+                                                           PrintExitCodes();
+                                                       });
+
             rootCommand.Invoke(args);
+        }
+
+        static void PrintExitCodes()
+        {
+            foreach (var currentEnumItem in Enum.GetValues(typeof(ExitCode)))
+            {
+                Console.WriteLine($"{(int)currentEnumItem} => {currentEnumItem}");
+            }
         }
 
         static void UnpackBackup(string backupFilename, string path, bool extractTar = false, string password = "")
         {
             if (File.Exists(backupFilename) == false)
             {
-                Console.WriteLine($"File \"{backupFilename}\" does not exits or you don't have permission to read it.");
-                return;
+                Console.Error.WriteLine($"File \"{backupFilename}\" does not exits or you don't have permission to access it.");
+                Environment.Exit((int)ExitCode.BackupNotFound);
             }
 
             if (extractTar == false && File.Exists(path) == true)
             {
-                Console.WriteLine($"File \"{path}\" already exists.");
-                return;
+                Console.Error.WriteLine($"File \"{path}\" already exists.");
+                Environment.Exit((int)ExitCode.FileExists);
             }
 
             if (extractTar == true && Directory.Exists(path) && (Directory.GetFiles(path).Length + Directory.GetDirectories(path).Length) > 0)
             {
-                Console.WriteLine($"Directory \"{path}\" is not empty.");
-                return;
+                Console.Error.WriteLine($"Directory \"{path}\" is not empty.");
+                Environment.Exit((int)ExitCode.DirectoryNotEmpty);
             }
 
             try
@@ -93,16 +110,27 @@ namespace AndroidBackupUnpackerConsole
                     ExtractTar.ToFolder(path, tarStream);
                 }
             }
+            catch (NoPasswordProvidedException ex)
+            {
+                Console.Error.WriteLine(ex.Message);
+                Environment.Exit((int)ExitCode.NoPasswordProvided);
+            }
+            catch (WrongPasswordException ex)
+            {
+                Console.Error.WriteLine(ex.Message);
+                Environment.Exit((int)ExitCode.WrongPassword);
+            }
+            catch (ChecksumFailedException ex)
+            {
+                Console.Error.WriteLine(ex.Message);
+                Environment.Exit((int)ExitCode.ChecksumFailed);
+            }
             catch (Exception ex)
             {
-                if (ex is NoPasswordProvidedException || ex is WrongPasswordException || ex is ChecksumFailedException)
-                {
-                    Console.WriteLine(ex.Message);
-                    return;
-                }
-
                 throw ex;
             }
+
+            Console.WriteLine("Done.");
         }
     }
 }
