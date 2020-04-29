@@ -23,7 +23,7 @@
     <None Update="Backups\encryption-1234.ab">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Backups\encryption-q1w2e3r4t5z6u7.ab">
+    <None Update="Backups\encryption-q1w2e3r4t5y6u7.ab">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Backups\no-encryption.ab">

@@ -69,24 +69,79 @@ namespace UnitTests
         }
 
         [Test]
-        public void NotEncryptedConvert()
+        public void BackupFileDoesntExist()
         {
-            Assert.IsTrue(Helpers.RunAbuAndCheckFile($"{Constants.BackupFolderPath}/no-encryption.ab --convert {Constants.TarPath}", TestFileType.Tar));
+            try
+            {
+                Assert.IsTrue(Helpers.RunAbuAndCheckFile($"{Constants.BackupFolderPath}/doesnt-exist.ab --convert {Constants.TarPath}", TestFileType.Tar));
+            }
+            catch (Exception ex)
+            {
+                Assert.IsTrue(ex.Message.Contains("does not exist"));
+            }
         }
 
         [Test]
-        public void NotEncryptedConvertFileExists()
+        public void ConvertFileExists()
         {
             File.WriteAllText(Constants.TarPath, "test");
 
             try
             {
-                Assert.IsTrue(Helpers.RunAbuAndCheckFile($"{Constants.BackupFolderPath}/no-encryption.ab --convert {Constants.TarPath}", TestFileType.Tar));
+                NotEncryptedConvert();
             }
             catch (Exception ex)
             {
                 Assert.IsTrue(ex.Message.Contains("already exists"));
             }
+        }
+
+        [Test]
+        public void UnpackDirectoryNotEmpty()
+        {
+            Directory.CreateDirectory(Constants.UnpackPath);
+            File.WriteAllText($"{Constants.UnpackPath}/file.txt", "test");
+
+            try
+            {
+                NotEncryptedUnpack();
+            }
+            catch (Exception ex)
+            {
+                Assert.IsTrue(ex.Message.Contains("is not empty"));
+            }
+        }
+
+        [Test]
+        public void NoPasswordProvided()
+        {
+            try
+            {
+                Assert.IsTrue(Helpers.RunAbuAndCheckFile($"{Constants.BackupFolderPath}/encryption-1234.ab --convert {Constants.TarPath}", TestFileType.Tar));
+            }
+            catch (Exception ex)
+            {
+                Assert.IsTrue(ex.Message.Contains("The backup is encrypted but no password was provided"));
+            }
+        }
+
+        [Test]
+        public void WrongPasswordProvided()
+        {
+            try
+            {
+                Assert.IsTrue(Helpers.RunAbuAndCheckFile($"{Constants.BackupFolderPath}/encryption-1234.ab --convert {Constants.TarPath} --password wrong-password", TestFileType.Tar));
+            }
+            catch (Exception ex)
+            {
+                Assert.IsTrue(ex.Message.Contains("Wrong password"));
+            }
+        }
+
+        [Test]
+        public void NotEncryptedConvert()
+        {
+            Assert.IsTrue(Helpers.RunAbuAndCheckFile($"{Constants.BackupFolderPath}/no-encryption.ab --convert {Constants.TarPath}", TestFileType.Tar));
         }
 
         [Test]
@@ -96,19 +151,27 @@ namespace UnitTests
         }
 
         [Test]
-        public void NotEncryptedUnpackDirectoryNotEmpty()
+        public void EncryptedConvertFirst()
         {
-            Directory.CreateDirectory(Constants.UnpackPath);
-            File.WriteAllText($"{Constants.UnpackPath}/file.txt", "test");
+            Assert.IsTrue(Helpers.RunAbuAndCheckFile($"{Constants.BackupFolderPath}/encryption-1234.ab --convert {Constants.TarPath} --password 1234", TestFileType.Tar));
+        }
 
-            try
-            {
-                Assert.IsTrue(Helpers.RunAbuAndCheckFile($"{Constants.BackupFolderPath}/no-encryption.ab --unpack {Constants.UnpackPath}", TestFileType.Apk));
-            }
-            catch (Exception ex)
-            {
-                Assert.IsTrue(ex.Message.Contains("is not empty"));
-            }
+        [Test]
+        public void EncryptedConvertSecond()
+        {
+            Assert.IsTrue(Helpers.RunAbuAndCheckFile($"{Constants.BackupFolderPath}/encryption-q1w2e3r4t5y6u7.ab --convert {Constants.TarPath} --password q1w2e3r4t5y6u7", TestFileType.Tar));
+        }
+
+        [Test]
+        public void EncryptedUnpackFirst()
+        {
+            Assert.IsTrue(Helpers.RunAbuAndCheckFile($"{Constants.BackupFolderPath}/encryption-1234.ab --unpack {Constants.UnpackPath} --password 1234", TestFileType.Apk));
+        }
+
+        [Test]
+        public void EncryptedUnpackSecond()
+        {
+            Assert.IsTrue(Helpers.RunAbuAndCheckFile($"{Constants.BackupFolderPath}/encryption-q1w2e3r4t5y6u7.ab --unpack {Constants.UnpackPath} --password q1w2e3r4t5y6u7", TestFileType.Apk));
         }
     }
 }

@@ -7,7 +7,7 @@ namespace UnitTests
 {
     public static class Helpers
     {
-        private const int ProcessTimeoutMilliseconds = 10 * 1000;
+        private const int ProcessTimeoutMilliseconds = 5 * 1000;
 
         internal static void DeleteDirectory(string path)
         {

@@ -80,7 +80,7 @@ namespace AndroidBackupUnpackerConsole
         {
             if (File.Exists(backupFilename) == false)
             {
-                Console.Error.WriteLine($"File \"{backupFilename}\" does not exits or you don't have permission to access it.");
+                Console.Error.WriteLine($"File \"{backupFilename}\" does not exist or you don't have permission to access it.");
                 Environment.Exit((int)ExitCode.BackupNotFound);
             }
 
