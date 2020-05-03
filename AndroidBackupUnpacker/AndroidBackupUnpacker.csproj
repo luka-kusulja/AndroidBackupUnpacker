@@ -1,18 +1,37 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Authors>Luka Kusulja</Authors>
-    <Company>Quesko</Company>
-    <PackageProjectUrl>https://github.com/luka-kusulja/AndroidBackupUnpacker</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/luka-kusulja/AndroidBackupUnpacker</RepositoryUrl>
-    <Copyright>Luka Kusulja</Copyright>
     <Description>Android backup unpacker</Description>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
+
+    <PackageId>AndroidBackupUnpacker</PackageId>
+    <Title>Android backup unpacker</Title>
+    <Authors>Luka Kusulja</Authors>
+    <Copyright>Luka Kusulja</Copyright>
+    <Company>Quesko</Company>
+
+    <PackageDescription>This package includes a tool for manipulating Android backup files, features:
+    
+    * Support for encrypted backups
+    * Unpack backup content to folder
+    * Convert backup to TAR archive
+    </PackageDescription>
+    
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
+    <PackageIcon>Icon.png</PackageIcon>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/luka-kusulja/AndroidBackupUnpacker</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/luka-kusulja/AndroidBackupUnpacker</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="SharpZipLib" Version="1.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Icon.png" Pack="true" PackagePath=""/>
   </ItemGroup>
 
 </Project>
